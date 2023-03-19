@@ -1,0 +1,35 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.page {
+  height: 95vh;
+  min-height: 95vh;
+  /* background-color: #000000c4; */
+  /* display: inline-block; */
+}
+
+.draggable {
+  position: absolute;
+  width: 400px;
+  height: 100px;
+  background-color: #ffff007a;
+}
+
+.clonable {
+  /* position: absolute; */
+  padding: 5px;
+  /* margin-top: 20px; */
+}
+
+.drag-box {
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.center-container {
+  text-align: center;
+  border: 0.05em solid black;
+}
