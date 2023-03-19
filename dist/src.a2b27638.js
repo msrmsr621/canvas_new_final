@@ -4704,6 +4704,42 @@ var zoom_value_formula = 1;
   defaultSelectedZoomCanvas(selected_index);
   checkAllImagesLoaded();
 })();
+function transformToFit() {
+  var images = document.querySelectorAll(".image_element");
+  console.log("images ", images);
+  var maxWidth = 0;
+  images.forEach(function (image) {
+    var width = image.clientWidth;
+    maxWidth = Math.max(maxWidth, width);
+    var height = image.clientHeight;
+    console.log("Image width: ".concat(width, "px, height: ").concat(height, "px"));
+  });
+  var container = document.getElementById("stack");
+  var offsets_world = document.getElementById("world");
+  var scaleValue = 1;
+  // if(maxWidth>container.clientWidth){
+  scaleValue = container.clientWidth / maxWidth;
+  if (scaleValue <= 1) {
+    // scaleValue = container.clientWidth / maxWidth - 0.01;
+    offsets_world.style.transform = "scale(".concat(scaleValue - 0.01, ")");
+  } else {
+    // scaleValue = container.clientWidth / maxWidth - 0.2;
+
+    offsets_world.style.transform = "scale(".concat(scaleValue - 0.1, ")");
+  }
+  zoom_value_formula = 1 / scaleValue;
+  // }
+  // else{
+  //     scaleValue=maxWidth;
+  // offsets_world.style.transform = `scale(${scaleValue})`;
+  // }
+
+  // if(scaleValue>0){
+  // zoom_value_formula = 1/scaleValue;
+  // }
+  // console.log(container.clientWidth/maxWidth-0.01)
+}
+
 function changeZoomCanvas(event) {
   console.log("doSomething", event);
   var selected_index = event.target.selectedIndex;
@@ -4734,8 +4770,9 @@ function defaultSelectedZoomCanvas(selected_index) {
   } else if (selected_index == 6) {
     zoom_value_formula = 1;
     offsets_world.style.transform = 'scale(1)';
+    transformToFit();
   } else if (selected_index == 7) {
-    zoom_value_formula = 0.5;
+    zoom_value_formula = 0.82;
     offsets_world.style.transform = 'scale(1.2)';
   }
 }
@@ -4948,7 +4985,9 @@ function checkAllImagesLoaded() {
     }
   }
 }
-function fitToWidth() {}
+function fitToWidth() {
+  transformToFit();
+}
 },{"subjx/dist/style/subjx.css":"node_modules/subjx/dist/style/subjx.css","subjx":"node_modules/subjx/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -4974,7 +5013,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43437" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63414" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

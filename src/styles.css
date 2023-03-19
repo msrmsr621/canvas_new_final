@@ -30,6 +30,6 @@ body {
 }
 
 .center-container {
-  text-align: center;
+  /* text-align: center; */
   border: 0.05em solid black;
 }

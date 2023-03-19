@@ -21,7 +21,41 @@ var zoom_value_formula = 1;
 
 })();
 
-
+function transformToFit() {
+    const images = document.querySelectorAll(".image_element");
+    console.log("images ", images);
+    let maxWidth = 0;
+    images.forEach((image) => {
+      const width = image.clientWidth;
+      maxWidth = Math.max(maxWidth, width);
+      const height = image.clientHeight;
+      console.log(`Image width: ${width}px, height: ${height}px`);
+    });
+    let container = document.getElementById("stack");
+    let offsets_world = document.getElementById("world");
+    let scaleValue = 1;
+    // if(maxWidth>container.clientWidth){
+      scaleValue = container.clientWidth / maxWidth;
+    if (scaleValue <= 1) {
+      // scaleValue = container.clientWidth / maxWidth - 0.01;
+      offsets_world.style.transform = `scale(${scaleValue-0.01})`;
+    } else {
+      // scaleValue = container.clientWidth / maxWidth - 0.2;
+      
+      offsets_world.style.transform = `scale(${scaleValue -0.1})`;
+    }
+    zoom_value_formula = 1 / scaleValue;
+    // }
+    // else{
+    //     scaleValue=maxWidth;
+    // offsets_world.style.transform = `scale(${scaleValue})`;
+    // }
+  
+    // if(scaleValue>0){
+    // zoom_value_formula = 1/scaleValue;
+    // }
+    // console.log(container.clientWidth/maxWidth-0.01)
+  }
 function changeZoomCanvas(event) {
     console.log("doSomething", event);
 
@@ -57,8 +91,9 @@ function defaultSelectedZoomCanvas(selected_index) {
     } else if (selected_index == 6) {
         zoom_value_formula = 1;
         offsets_world.style.transform = 'scale(1)';
+        transformToFit()
     } else if (selected_index == 7) {
-        zoom_value_formula = 0.5;
+        zoom_value_formula = 0.82;
         offsets_world.style.transform = 'scale(1.2)';
     }
 }
@@ -302,7 +337,7 @@ function checkAllImagesLoaded() {
 }
 
 function fitToWidth() {
-
+    transformToFit()
     
 
 }
