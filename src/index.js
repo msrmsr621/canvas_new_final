@@ -3,6 +3,7 @@ import "subjx/dist/style/subjx.css";
 import subjx from "subjx";
 
 var zoom_value_formula = 1;
+let scaleValue = 1;
 
 // self executing function here
 (function() {
@@ -17,10 +18,25 @@ var zoom_value_formula = 1;
     defaultSelectedZoomCanvas(selected_index);
 
     checkAllImagesLoaded();
+    document.addEventListener('mousemove',moveCursor)
+    
 
 
 })();
+function fitTextToImage()
+{
+    // const images = document.querySelectorAll(".image_element");
+    console.log("divs")
+    var divs = document.querySelectorAll('div[id^="imageContainer"]');
+    divs.forEach((div) => {
+        let text_div=div.getElementsByClassName("image_text")[0];
+        let image_div=div.getElementsByClassName("image_element")[0];
+        text_div.style.width=image_div.clientWidth-20+"px";
 
+        
+    });
+    console.log(divs)
+}
 function transformToFit() {
     const images = document.querySelectorAll(".image_element");
     console.log("images ", images);
@@ -33,16 +49,17 @@ function transformToFit() {
     });
     let container = document.getElementById("stack");
     let offsets_world = document.getElementById("world");
-    let scaleValue = 1;
+    
     // if(maxWidth>container.clientWidth){
       scaleValue = container.clientWidth / maxWidth;
     if (scaleValue <= 1) {
       // scaleValue = container.clientWidth / maxWidth - 0.01;
-      offsets_world.style.transform = `scale(${scaleValue-0.01})`;
+      scaleValue=scaleValue- 0.01;
+      offsets_world.style.transform = `scale(${scaleValue})`;
     } else {
       // scaleValue = container.clientWidth / maxWidth - 0.2;
-      
-      offsets_world.style.transform = `scale(${scaleValue -0.1})`;
+      scaleValue=scaleValue- 0.1;
+      offsets_world.style.transform = `scale(${scaleValue})`;
     }
     zoom_value_formula = 1 / scaleValue;
     // }
@@ -89,8 +106,8 @@ function defaultSelectedZoomCanvas(selected_index) {
         zoom_value_formula = 1.1;
         offsets_world.style.transform = 'scale(0.9)';
     } else if (selected_index == 6) {
-        zoom_value_formula = 1;
-        offsets_world.style.transform = 'scale(1)';
+        // zoom_value_formula = 1;
+        // offsets_world.style.transform = 'scale(1)';
         transformToFit()
     } else if (selected_index == 7) {
         zoom_value_formula = 0.82;
@@ -182,7 +199,9 @@ function cacluatePosition() {
     }
   
 }
-
+let clicked = false;
+let elementToBeCloned = null;
+let elementToBeClonedDup = null;
 const xElem = subjx(".draggable");
 const options = {
     container: '#world',
@@ -249,23 +268,11 @@ const methods = {
     }
 }
 let xDraggable = xElem.drag(options);
-
-subjx('.clone').clone({
-    stack: '#container',
-    appendTo: '#stack',
-    onInit(el) {
-        // fires on tool activation;
-        console.log("clone init")
-    },
-    onMove(dx, dy) {
-        // fires on moving
-        // console.log("fires on moving ", dx, dy)
-    },
-    onDrop(e, el, clone) {
-        // fires on drop
-        console.log("onDrop e ", e);
+// console.log(xDraggable.controls);
+function cloneElement(e,el){
+    console.log("onDrop e ", e);
         console.log("onDrop el ", el);
-        console.log("onDrop clone ", clone);
+        // console.log("onDrop clone ", clone);
         let parent = document.getElementById("world");
 
         // console.log(xDraggable.length)
@@ -302,17 +309,134 @@ subjx('.clone').clone({
         xDraggable.push(
             subjx(drag_div).drag(options)
         );
+
+}
+subjx('.clone').clone({
+    stack: '#container',
+    appendTo: '#stack',
+    onInit(el) {
+        // fires on tool activation;
+        console.log("clone init")
+    },
+    onMove(dx, dy) {
+        // fires on moving
+        // console.log("fires on moving ", dx, dy)
+    },
+    onDrop(e, el, clone) {
+        // fires on drop
+        console.log("onDrop e ", e);
+        console.log("onDrop el ", el);
+        console.log("onDrop clone ", clone);
+        cloneElement(e,el);
+        // let parent = document.getElementById("world");
+
+        // // console.log(xDraggable.length)
+        // const stack = subjx('#world')[0],
+        //     offset = stack.getBoundingClientRect(),
+        //     drag_div = document.createElement('div');
+
+        // // const xDraggable_length = xDraggable.length;
+
+        // // drag_div.setAttribute("id", "item_"+(xDraggable_length+1));
+        // drag_div.setAttribute("class", "draggable");
+        // drag_div.setAttribute("document_id", e.target.id);
+        // drag_div.style.top = `${(e.clientY - offset.top)*zoom_value_formula}px`;
+        // drag_div.style.left = `${(e.clientX - offset.left)*zoom_value_formula}px`;
+
+        // console.log("top ", e.clientY, " ", offset.top, " -> ", ((e.clientY - offset.top) * zoom_value_formula));
+        // console.log("left ", e.clientX, " ", offset.left, " -> ", ((e.clientX - offset.left) * zoom_value_formula));
+
+        // // drag_div.style.top = "150px";
+        // // drag_div.style.left = "600px";
+
+        // let drag_img = document.createElement('img');
+        // drag_img.style.background = "url('https://wesign.com/assets/images_dev/sign_box_2.png') 50% center / contain no-repeat, rgb(255, 214, 91)";
+        // drag_img.style.opacity = 0.8;
+        // drag_img.style.border =  '1px solid rgb(255, 255, 118)';
+        // drag_img.style.borderRadius =  '5px';
+        // drag_img.style.width = '100%';
+        // drag_img.style.height =  '100%';
+
+
+        // drag_div.appendChild(drag_img);
+        // parent.appendChild(drag_div);
+
+        // xDraggable.push(
+        //     subjx(drag_div).drag(options)
+        // );
     },
     onDestroy() {
         // fires on tool deactivation
     }
 });
+subjx('#container').on('click', async (a) => {
+    if(clicked == true)
+    {
+        clicked = false;
+        cloneElement(a,elementToBeCloned);
+        // document.removeChild(elementToBeClonedDup);
+        let container=document.getElementById("container");
+    container.removeChild(elementToBeClonedDup);
+    }
+});
+// subjx('.clone').clone({
 
+// })
 
-subjx('.clone').on('click', async () => {
+function moveCursor(event)
+{
+    // console.log("moveCursor ", event)
+    const mouseY= event.clientY;
+    const mouseX= event.clientX;
+    // elementToBeCloned.style. = mouseY;
+    if(clicked == true)
+    {
+        elementToBeClonedDup.style.left = mouseX + "px";
+    elementToBeClonedDup.style.top = mouseY + "px";
+    // clicked = false;
+    
+
+    }
+    
+}
+
+subjx('.clone').on('click', async (a) => {
+    console.log("e ", a);
+    let el=a.target;
+    console.log("el ", el);
     console.log("single");
+    
+    if(clicked == false)
+    {
+        clicked = true;
+        elementToBeCloned = el;
+        
+        elementToBeClonedDup=elementToBeCloned.cloneNode(true);
+        // elementToBeClonedDup.style.position = "absolute";
+        // console.log(elementToBeClonedDup.style) 
+        // console.log(elementToBeClonedDup)
+        // elementToBeClonedDup.style.transition="all 200ms ease-out";
+        // elementToBeClonedDup.style.pointerEvents="none";
+        let container=document.getElementById("container");
+        // container.appendChild(elementToBeClonedDup);
+        // elementToBeClonedDup.style.zIndex="-1";
+        // elementToBeClonedDup.style.width="100px";
+        // elementToBeClonedDup.style.height="100px";
+        elementToBeClonedDup.style.position="fixed";
+        elementToBeClonedDup.style.pointerEvents="none";
+
+        container.appendChild(elementToBeClonedDup)
+        
+    }
+    
 
 });
+
+subjx('.clone').on('dblclick', async () => {
+    console.log("double click");
+    console.log(document.activeElement)
+});
+
 
 function checkAllImagesLoaded() {
     var imgs = document.images,
@@ -338,8 +462,31 @@ function checkAllImagesLoaded() {
 
 function fitToWidth() {
     transformToFit()
+    fitTextToImage()
+    scrollCheck();
     
 
+}
+function scrollCheck()
+{
+    console.log("scrollCheck")
+    let container=document.getElementById("stack");
+    console.log("container ", container)
+    container.addEventListener('scroll', function() {
+        var element = document.querySelector('#image_element01');
+        var position = element.getBoundingClientRect();
+        console.log("position ", position)
+    
+        // checking whether fully visible
+        if(position.top >= 0 && position.bottom <= window.innerHeight) {
+            console.log('Element is fully visible in screen');
+        }
+    
+        // checking for partial visibility
+        if(position.top < window.innerHeight && position.bottom >= 0) {
+            console.log('Element is partially visible in screen');
+        }
+    });
 }
 
 

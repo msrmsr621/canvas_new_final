@@ -4691,6 +4691,7 @@ function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key i
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 var zoom_value_formula = 1;
+var scaleValue = 1;
 
 // self executing function here
 (function () {
@@ -4703,7 +4704,19 @@ var zoom_value_formula = 1;
   console.log("selected_index ", selected_index);
   defaultSelectedZoomCanvas(selected_index);
   checkAllImagesLoaded();
+  document.addEventListener('mousemove', moveCursor);
 })();
+function fitTextToImage() {
+  // const images = document.querySelectorAll(".image_element");
+  console.log("divs");
+  var divs = document.querySelectorAll('div[id^="imageContainer"]');
+  divs.forEach(function (div) {
+    var text_div = div.getElementsByClassName("image_text")[0];
+    var image_div = div.getElementsByClassName("image_element")[0];
+    text_div.style.width = image_div.clientWidth - 20 + "px";
+  });
+  console.log(divs);
+}
 function transformToFit() {
   var images = document.querySelectorAll(".image_element");
   console.log("images ", images);
@@ -4716,16 +4729,17 @@ function transformToFit() {
   });
   var container = document.getElementById("stack");
   var offsets_world = document.getElementById("world");
-  var scaleValue = 1;
+
   // if(maxWidth>container.clientWidth){
   scaleValue = container.clientWidth / maxWidth;
   if (scaleValue <= 1) {
     // scaleValue = container.clientWidth / maxWidth - 0.01;
-    offsets_world.style.transform = "scale(".concat(scaleValue - 0.01, ")");
+    scaleValue = scaleValue - 0.01;
+    offsets_world.style.transform = "scale(".concat(scaleValue, ")");
   } else {
     // scaleValue = container.clientWidth / maxWidth - 0.2;
-
-    offsets_world.style.transform = "scale(".concat(scaleValue - 0.1, ")");
+    scaleValue = scaleValue - 0.1;
+    offsets_world.style.transform = "scale(".concat(scaleValue, ")");
   }
   zoom_value_formula = 1 / scaleValue;
   // }
@@ -4768,8 +4782,8 @@ function defaultSelectedZoomCanvas(selected_index) {
     zoom_value_formula = 1.1;
     offsets_world.style.transform = 'scale(0.9)';
   } else if (selected_index == 6) {
-    zoom_value_formula = 1;
-    offsets_world.style.transform = 'scale(1)';
+    // zoom_value_formula = 1;
+    // offsets_world.style.transform = 'scale(1)';
     transformToFit();
   } else if (selected_index == 7) {
     zoom_value_formula = 0.82;
@@ -4850,6 +4864,9 @@ function cacluatePosition() {
     }
   }
 }
+var clicked = false;
+var elementToBeCloned = null;
+var elementToBeClonedDup = null;
 var xElem = (0, _subjx2.default)(".draggable");
 var options = _objectSpread({
   container: '#world',
@@ -4908,6 +4925,42 @@ var methods = {
   }
 };
 var xDraggable = xElem.drag(options);
+// console.log(xDraggable.controls);
+function cloneElement(e, el) {
+  console.log("onDrop e ", e);
+  console.log("onDrop el ", el);
+  // console.log("onDrop clone ", clone);
+  var parent = document.getElementById("world");
+
+  // console.log(xDraggable.length)
+  var stack = (0, _subjx2.default)('#world')[0],
+    offset = stack.getBoundingClientRect(),
+    drag_div = document.createElement('div');
+
+  // const xDraggable_length = xDraggable.length;
+
+  // drag_div.setAttribute("id", "item_"+(xDraggable_length+1));
+  drag_div.setAttribute("class", "draggable");
+  drag_div.setAttribute("document_id", e.target.id);
+  drag_div.style.top = "".concat((e.clientY - offset.top) * zoom_value_formula, "px");
+  drag_div.style.left = "".concat((e.clientX - offset.left) * zoom_value_formula, "px");
+  console.log("top ", e.clientY, " ", offset.top, " -> ", (e.clientY - offset.top) * zoom_value_formula);
+  console.log("left ", e.clientX, " ", offset.left, " -> ", (e.clientX - offset.left) * zoom_value_formula);
+
+  // drag_div.style.top = "150px";
+  // drag_div.style.left = "600px";
+
+  var drag_img = document.createElement('img');
+  drag_img.style.background = "url('https://wesign.com/assets/images_dev/sign_box_2.png') 50% center / contain no-repeat, rgb(255, 214, 91)";
+  drag_img.style.opacity = 0.8;
+  drag_img.style.border = '1px solid rgb(255, 255, 118)';
+  drag_img.style.borderRadius = '5px';
+  drag_img.style.width = '100%';
+  drag_img.style.height = '100%';
+  drag_div.appendChild(drag_img);
+  parent.appendChild(drag_div);
+  xDraggable.push((0, _subjx2.default)(drag_div).drag(options));
+}
 (0, _subjx2.default)('.clone').clone({
   stack: '#container',
   appendTo: '#stack',
@@ -4924,51 +4977,134 @@ var xDraggable = xElem.drag(options);
     console.log("onDrop e ", e);
     console.log("onDrop el ", el);
     console.log("onDrop clone ", clone);
-    var parent = document.getElementById("world");
+    cloneElement(e, el);
+    // let parent = document.getElementById("world");
 
-    // console.log(xDraggable.length)
-    var stack = (0, _subjx2.default)('#world')[0],
-      offset = stack.getBoundingClientRect(),
-      drag_div = document.createElement('div');
+    // // console.log(xDraggable.length)
+    // const stack = subjx('#world')[0],
+    //     offset = stack.getBoundingClientRect(),
+    //     drag_div = document.createElement('div');
 
-    // const xDraggable_length = xDraggable.length;
+    // // const xDraggable_length = xDraggable.length;
 
-    // drag_div.setAttribute("id", "item_"+(xDraggable_length+1));
-    drag_div.setAttribute("class", "draggable");
-    drag_div.setAttribute("document_id", e.target.id);
-    drag_div.style.top = "".concat((e.clientY - offset.top) * zoom_value_formula, "px");
-    drag_div.style.left = "".concat((e.clientX - offset.left) * zoom_value_formula, "px");
-    console.log("top ", e.clientY, " ", offset.top, " -> ", (e.clientY - offset.top) * zoom_value_formula);
-    console.log("left ", e.clientX, " ", offset.left, " -> ", (e.clientX - offset.left) * zoom_value_formula);
+    // // drag_div.setAttribute("id", "item_"+(xDraggable_length+1));
+    // drag_div.setAttribute("class", "draggable");
+    // drag_div.setAttribute("document_id", e.target.id);
+    // drag_div.style.top = `${(e.clientY - offset.top)*zoom_value_formula}px`;
+    // drag_div.style.left = `${(e.clientX - offset.left)*zoom_value_formula}px`;
 
-    // drag_div.style.top = "150px";
-    // drag_div.style.left = "600px";
+    // console.log("top ", e.clientY, " ", offset.top, " -> ", ((e.clientY - offset.top) * zoom_value_formula));
+    // console.log("left ", e.clientX, " ", offset.left, " -> ", ((e.clientX - offset.left) * zoom_value_formula));
 
-    var drag_img = document.createElement('img');
-    drag_img.style.background = "url('https://wesign.com/assets/images_dev/sign_box_2.png') 50% center / contain no-repeat, rgb(255, 214, 91)";
-    drag_img.style.opacity = 0.8;
-    drag_img.style.border = '1px solid rgb(255, 255, 118)';
-    drag_img.style.borderRadius = '5px';
-    drag_img.style.width = '100%';
-    drag_img.style.height = '100%';
-    drag_div.appendChild(drag_img);
-    parent.appendChild(drag_div);
-    xDraggable.push((0, _subjx2.default)(drag_div).drag(options));
+    // // drag_div.style.top = "150px";
+    // // drag_div.style.left = "600px";
+
+    // let drag_img = document.createElement('img');
+    // drag_img.style.background = "url('https://wesign.com/assets/images_dev/sign_box_2.png') 50% center / contain no-repeat, rgb(255, 214, 91)";
+    // drag_img.style.opacity = 0.8;
+    // drag_img.style.border =  '1px solid rgb(255, 255, 118)';
+    // drag_img.style.borderRadius =  '5px';
+    // drag_img.style.width = '100%';
+    // drag_img.style.height =  '100%';
+
+    // drag_div.appendChild(drag_img);
+    // parent.appendChild(drag_div);
+
+    // xDraggable.push(
+    //     subjx(drag_div).drag(options)
+    // );
   },
   onDestroy: function onDestroy() {
     // fires on tool deactivation
   }
 });
-(0, _subjx2.default)('.clone').on('click', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-  return _regeneratorRuntime().wrap(function _callee$(_context) {
-    while (1) switch (_context.prev = _context.next) {
+(0, _subjx2.default)('#container').on('click', /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(a) {
+    var container;
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          if (clicked == true) {
+            clicked = false;
+            cloneElement(a, elementToBeCloned);
+            // document.removeChild(elementToBeClonedDup);
+            container = document.getElementById("container");
+            container.removeChild(elementToBeClonedDup);
+          }
+        case 1:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee);
+  }));
+  return function (_x) {
+    return _ref5.apply(this, arguments);
+  };
+}());
+// subjx('.clone').clone({
+
+// })
+
+function moveCursor(event) {
+  // console.log("moveCursor ", event)
+  var mouseY = event.clientY;
+  var mouseX = event.clientX;
+  // elementToBeCloned.style. = mouseY;
+  if (clicked == true) {
+    elementToBeClonedDup.style.left = mouseX + "px";
+    elementToBeClonedDup.style.top = mouseY + "px";
+    // clicked = false;
+  }
+}
+
+(0, _subjx2.default)('.clone').on('click', /*#__PURE__*/function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(a) {
+    var el, container;
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          console.log("e ", a);
+          el = a.target;
+          console.log("el ", el);
+          console.log("single");
+          if (clicked == false) {
+            clicked = true;
+            elementToBeCloned = el;
+            elementToBeClonedDup = elementToBeCloned.cloneNode(true);
+            // elementToBeClonedDup.style.position = "absolute";
+            // console.log(elementToBeClonedDup.style) 
+            // console.log(elementToBeClonedDup)
+            // elementToBeClonedDup.style.transition="all 200ms ease-out";
+            // elementToBeClonedDup.style.pointerEvents="none";
+            container = document.getElementById("container"); // container.appendChild(elementToBeClonedDup);
+            // elementToBeClonedDup.style.zIndex="-1";
+            // elementToBeClonedDup.style.width="100px";
+            // elementToBeClonedDup.style.height="100px";
+            elementToBeClonedDup.style.position = "fixed";
+            elementToBeClonedDup.style.pointerEvents = "none";
+            container.appendChild(elementToBeClonedDup);
+          }
+        case 5:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  }));
+  return function (_x2) {
+    return _ref6.apply(this, arguments);
+  };
+}());
+(0, _subjx2.default)('.clone').on('dblclick', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+  return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+    while (1) switch (_context3.prev = _context3.next) {
       case 0:
-        console.log("single");
-      case 1:
+        console.log("double click");
+        console.log(document.activeElement);
+      case 2:
       case "end":
-        return _context.stop();
+        return _context3.stop();
     }
-  }, _callee);
+  }, _callee3);
 })));
 function checkAllImagesLoaded() {
   var imgs = document.images,
@@ -4987,6 +5123,28 @@ function checkAllImagesLoaded() {
 }
 function fitToWidth() {
   transformToFit();
+  fitTextToImage();
+  scrollCheck();
+}
+function scrollCheck() {
+  console.log("scrollCheck");
+  var container = document.getElementById("stack");
+  console.log("container ", container);
+  container.addEventListener('scroll', function () {
+    var element = document.querySelector('#image_element01');
+    var position = element.getBoundingClientRect();
+    console.log("position ", position);
+
+    // checking whether fully visible
+    if (position.top >= 0 && position.bottom <= window.innerHeight) {
+      console.log('Element is fully visible in screen');
+    }
+
+    // checking for partial visibility
+    if (position.top < window.innerHeight && position.bottom >= 0) {
+      console.log('Element is partially visible in screen');
+    }
+  });
 }
 },{"subjx/dist/style/subjx.css":"node_modules/subjx/dist/style/subjx.css","subjx":"node_modules/subjx/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -5013,7 +5171,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63414" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57944" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
