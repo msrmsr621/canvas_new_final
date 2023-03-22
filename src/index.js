@@ -457,9 +457,14 @@ function moveCursor(event)
     {
         elementToBeClonedDup.style.left = mouseX + "px";
     elementToBeClonedDup.style.top = mouseY + "px";
+    elementToBeClonedDup.style.display="block";
     // clicked = false;
     
 
+    }
+    else
+    {
+        elementToBeClonedDup.style.display="none";
     }
     
 }
@@ -500,6 +505,7 @@ subjx('.clone').on('click', async (a) => {
         // elementToBeClonedDup.style.zIndex="-1";
         // elementToBeClonedDup.style.width="100px";
         // elementToBeClonedDup.style.height="100px";
+        elementToBeClonedDup.style.display="none";
         elementToBeClonedDup.style.position="fixed";
         elementToBeClonedDup.style.pointerEvents="none";
 
@@ -525,6 +531,7 @@ subjx('.clone').on('dblclick', async () => {
     var divs = document.querySelectorAll('img[id^="image_element"]');
     let container=document.getElementById('container')
     let [containerStart,containerEnd]=getStartEnd(container)
+    let containerMid=containerStart+(containerEnd-containerStart)/2
 
     let maxPercentage=0
     let maxDiv=null;
@@ -551,7 +558,8 @@ subjx('.clone').on('dblclick', async () => {
     console.log('max div')
     console.log(maxDiv)
     let maxDivRect=maxDiv.getBoundingClientRect();
-    CloneElementUsingXY(maxDivRect.x,maxDivRect.y,maxDiv.id)
+    let visibleStart=Math.max(containerStart,maxDivRect.y)
+    CloneElementUsingXY(maxDivRect.x,visibleStart,maxDiv.id)
 
 });
 subjx(".removePointer").on('click',async (a)=>{

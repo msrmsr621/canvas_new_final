@@ -5108,10 +5108,12 @@ function moveCursor(event) {
   if (clicked == true && isHover(element)) {
     elementToBeClonedDup.style.left = mouseX + "px";
     elementToBeClonedDup.style.top = mouseY + "px";
+    elementToBeClonedDup.style.display = "block";
     // clicked = false;
+  } else {
+    elementToBeClonedDup.style.display = "none";
   }
 }
-
 (0, _subjx2.default)('.clone').on('click', /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(a) {
     var el, container, _container;
@@ -5147,6 +5149,7 @@ function moveCursor(event) {
             // elementToBeClonedDup.style.zIndex="-1";
             // elementToBeClonedDup.style.width="100px";
             // elementToBeClonedDup.style.height="100px";
+            elementToBeClonedDup.style.display = "none";
             elementToBeClonedDup.style.position = "fixed";
             elementToBeClonedDup.style.pointerEvents = "none";
             _container.appendChild(elementToBeClonedDup);
@@ -5162,7 +5165,7 @@ function moveCursor(event) {
   };
 }());
 (0, _subjx2.default)('.clone').on('dblclick', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-  var getStartEnd, divs, container, _getStartEnd, _getStartEnd2, containerStart, containerEnd, maxPercentage, maxDiv, maxDivRect;
+  var getStartEnd, divs, container, _getStartEnd, _getStartEnd2, containerStart, containerEnd, containerMid, maxPercentage, maxDiv, maxDivRect, visibleStart;
   return _regeneratorRuntime().wrap(function _callee3$(_context3) {
     while (1) switch (_context3.prev = _context3.next) {
       case 0:
@@ -5177,6 +5180,7 @@ function moveCursor(event) {
         divs = document.querySelectorAll('img[id^="image_element"]');
         container = document.getElementById('container');
         _getStartEnd = getStartEnd(container), _getStartEnd2 = _slicedToArray(_getStartEnd, 2), containerStart = _getStartEnd2[0], containerEnd = _getStartEnd2[1];
+        containerMid = containerStart + (containerEnd - containerStart) / 2;
         maxPercentage = 0;
         maxDiv = null;
         divs.forEach(function (div) {
@@ -5203,8 +5207,9 @@ function moveCursor(event) {
         console.log('max div');
         console.log(maxDiv);
         maxDivRect = maxDiv.getBoundingClientRect();
-        CloneElementUsingXY(maxDivRect.x, maxDivRect.y, maxDiv.id);
-      case 12:
+        visibleStart = Math.max(containerStart, maxDivRect.y);
+        CloneElementUsingXY(maxDivRect.x, visibleStart, maxDiv.id);
+      case 14:
       case "end":
         return _context3.stop();
     }
@@ -5298,7 +5303,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50315" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56539" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
