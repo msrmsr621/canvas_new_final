@@ -4764,7 +4764,53 @@ function defaultSelectedZoomCanvas(zoom_value) {
   }
 }
 function calculatePosition() {
+  function getPage(pages, element) {
+    var page = 0;
+    var elementTop = element[0].el.getClientRects()[0].top;
+    arr.forEach(function (element, index) {
+      if (elementTop > element.getClientRects()[0].top) {
+        page = index + 1;
+      }
+    });
+    return page;
+  }
   console.log("xDraggable ", xDraggable);
+  var coords_combined = [];
+  var page = document.getElementsByClassName("full-image");
+  var arr = Array.prototype.slice.call(page);
+  // console.log("page ", arr);
+
+  xDraggable.forEach(function (element) {
+    var coords = {
+      "top": "300",
+      "left": "500",
+      "width": "400",
+      "height": "100",
+      "page": 1,
+      "documents_top": "3000",
+      "image_height": "2000",
+      "image_width": "2500",
+      "document_snapshot": "1448/samplepdf-263202311210/images/sample-1.png",
+      "document_key": "1448/742942632023112059_sample.pdf",
+      "element_id": "signature-fry28YPQQE"
+    };
+    console.log();
+    console.log("page", getPage(arr, element));
+    var first_page_top = arr[0].getClientRects()[0].top;
+    coords["top"] = element[0].el.getClientRects()[0].top - first_page_top;
+    coords["left"] = element[0].el.getClientRects()[0].left;
+    coords["width"] = element[0].el.getClientRects()[0].width;
+    coords["height"] = element[0].el.getClientRects()[0].height;
+    coords["page"] = getPage(arr, element);
+    coords["documents_top"] = arr[coords["page"] - 1].getClientRects()[0].top;
+    coords["image_height"] = arr[coords["page"] - 1].getClientRects()[0].height;
+    coords["image_width"] = arr[coords["page"] - 1].getClientRects()[0].width;
+    coords["document_snapshot"] = arr[coords["page"] - 1].getAttribute("snapshots_name");
+    coords["document_key"] = arr[coords["page"] - 1].getAttribute("document_key");
+    coords["element_id"] = element[0].el.getElementsByTagName("img")[0].getAttribute("id");
+    coords_combined.push(coords);
+  });
+  console.log("coords_combined ", coords_combined);
 }
 var clicked = false;
 var elementToBeCloned = null;
@@ -5106,7 +5152,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42765" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59565" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
