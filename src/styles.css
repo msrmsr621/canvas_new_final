@@ -7,8 +7,6 @@ body {
 .page {
   height: 95vh;
   min-height: 95vh;
-  /* background-color: #000000c4; */
-  /* display: inline-block; */
 }
 
 .draggable {
@@ -19,9 +17,8 @@ body {
 }
 
 .clonable {
-  /* position: absolute; */
   padding: 5px;
-  /* margin-top: 20px; */
+  background-color:yellow;
 }
 
 .drag-box {
