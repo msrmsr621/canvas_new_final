@@ -129,13 +129,13 @@ function calculatePosition() {
             };
             console.log();
             console.log("page",getPage(arr,element));
-            let first_page_top=arr[0].getClientRects()[0].top;
-            coords["top"]=element[0].el.getClientRects()[0].top-first_page_top;
-            coords["left"]=element[0].el.getClientRects()[0].left;
+            coords["page"]=getPage(arr,element);
+            let page_top=arr[coords["page"]-1].getClientRects()[0].top;
+            coords["top"]=(element[0].el.getClientRects()[0].top-page_top)*zoom_value_formula;
+            coords["left"]=(element[0].el.getClientRects()[0].left)*zoom_value_formula;
             coords["width"]=element[0].el.getClientRects()[0].width;
             coords["height"]=element[0].el.getClientRects()[0].height;
-            coords["page"]=getPage(arr,element);
-            coords["documents_top"]=arr[coords["page"]-1].getClientRects()[0].top;
+            coords["documents_top"]=(element[0].el.getClientRects()[0].top-arr[0].getClientRects()[0].top)*zoom_value_formula;
             coords["image_height"]=arr[coords["page"]-1].getClientRects()[0].height;
             coords["image_width"]=arr[coords["page"]-1].getClientRects()[0].width;
             coords["document_snapshot"]=arr[coords["page"]-1].getAttribute("snapshots_name");
