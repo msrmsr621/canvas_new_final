@@ -4764,23 +4764,47 @@ function defaultSelectedZoomCanvas(zoom_value) {
   }
 }
 function calculatePosition() {
-  function getPage(pages, element) {
-    var page = 0;
-    var elementTop = element[0].el.getClientRects()[0].top;
-    arr.forEach(function (element, index) {
-      if (elementTop > element.getClientRects()[0].top) {
-        page = index + 1;
-      }
-    });
-    return page;
-  }
+  // function getPage(pages,element)
+  // {
+  //     let page=0
+  //     let elementTop=element[0].el.getClientRects()[0].top;
+  //     arr.forEach((element,index) => {
+  //         if(elementTop>element.getClientRects()[0].top)
+  //         {
+  //             page=index+1;
+  //         }
+  //     })
+  //     return page;
+  // }
   console.log("xDraggable ", xDraggable);
   var coords_combined = [];
   var page = document.getElementsByClassName("full-image");
   var arr = Array.prototype.slice.call(page);
   // console.log("page ", arr);
-
+  var element_tops = [];
+  var element_page = [];
+  var page_tops = [];
+  var pageIndex = 0;
+  var elementIndex = 0;
   xDraggable.forEach(function (element) {
+    var elementTop = element[0].el.getClientRects()[0].top;
+    element_tops.push(elementTop);
+    element_page.push(0);
+  });
+  arr.forEach(function (element) {
+    var elementTop = element.getClientRects()[0].top;
+    page_tops.push(elementTop);
+  });
+  elementIndex = element_tops.length - 1;
+  pageIndex = page_tops.length - 1;
+  while (elementIndex >= 0) {
+    while (elementIndex >= 0 && element_tops[elementIndex] > page_tops[pageIndex]) {
+      element_page[elementIndex] = pageIndex;
+      elementIndex -= 1;
+    }
+    pageIndex -= 1;
+  }
+  xDraggable.forEach(function (element, index) {
     var coords = {
       "top": "300",
       "left": "500",
@@ -4795,8 +4819,8 @@ function calculatePosition() {
       "element_id": "signature-fry28YPQQE"
     };
     console.log();
-    console.log("page", getPage(arr, element));
-    coords["page"] = getPage(arr, element);
+    // console.log("page",getPage(arr,element));
+    coords["page"] = element_page[index] + 1;
     var page_top = arr[coords["page"] - 1].getClientRects()[0].top;
     coords["top"] = (element[0].el.getClientRects()[0].top - page_top) * zoom_value_formula;
     coords["left"] = element[0].el.getClientRects()[0].left * zoom_value_formula;
@@ -5152,7 +5176,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53110" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52736" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

@@ -95,25 +95,51 @@ function defaultSelectedZoomCanvas(zoom_value) {
 
 function calculatePosition() {
 
-    function getPage(pages,element)
-    {
-        let page=0
-        let elementTop=element[0].el.getClientRects()[0].top;
-        arr.forEach((element,index) => {
-            if(elementTop>element.getClientRects()[0].top)
-            {
-                page=index+1;
-            }
-        })
-        return page;
-    }
+    // function getPage(pages,element)
+    // {
+    //     let page=0
+    //     let elementTop=element[0].el.getClientRects()[0].top;
+    //     arr.forEach((element,index) => {
+    //         if(elementTop>element.getClientRects()[0].top)
+    //         {
+    //             page=index+1;
+    //         }
+    //     })
+    //     return page;
+    // }
     console.log("xDraggable ", xDraggable);
     let coords_combined=[];
     let page= document.getElementsByClassName("full-image");
     var arr = Array.prototype.slice.call( page)
     // console.log("page ", arr);
-    
-    xDraggable.forEach((element) => {
+    let element_tops=[]
+    let element_page=[]
+    let page_tops=[]
+    let pageIndex=0;
+    let elementIndex=0;
+    xDraggable.forEach((element)=>{
+        let elementTop=element[0].el.getClientRects()[0].top;
+        element_tops.push( elementTop)
+        element_page.push(0)
+    })
+    arr.forEach((element)=>{
+        let elementTop=element.getClientRects()[0].top;
+        page_tops.push( elementTop)
+    })
+    elementIndex=element_tops.length-1
+    pageIndex=page_tops.length-1
+    while(elementIndex>=0)
+    {
+        while(elementIndex>=0&& element_tops[elementIndex]>page_tops[pageIndex])
+        {
+            element_page[elementIndex]=pageIndex;
+            elementIndex-=1;
+        }
+        
+            pageIndex-=1;
+        
+    }
+    xDraggable.forEach((element,index) => {
         let coords={
             "top": "300",
             "left": "500",
@@ -128,8 +154,8 @@ function calculatePosition() {
             "element_id": "signature-fry28YPQQE"
             };
             console.log();
-            console.log("page",getPage(arr,element));
-            coords["page"]=getPage(arr,element);
+            // console.log("page",getPage(arr,element));
+            coords["page"]=element_page[index]+1;
             let page_top=arr[coords["page"]-1].getClientRects()[0].top;
             coords["top"]=(element[0].el.getClientRects()[0].top-page_top)*zoom_value_formula;
             coords["left"]=(element[0].el.getClientRects()[0].left)*zoom_value_formula;
