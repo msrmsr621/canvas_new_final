@@ -4962,30 +4962,32 @@ function CloneElementUsingXY(clientX, clientY, target_id) {
   onInit: function onInit(el) {
     // fires on tool activation;
     console.log("clone init");
-    var drag_div = document.createElement('div');
-    var drag_img = document.createElement('img');
-    drag_img.style.background = "url('https://wesign.com/assets/images_dev/sign_box_2.png') 50% center / contain no-repeat, rgb(255, 214, 91)";
-    drag_img.style.opacity = 0.8;
-    drag_img.style.border = '1px solid rgb(255, 255, 118)';
-    drag_img.style.borderRadius = '5px';
-    drag_img.style.width = '100%';
-    drag_img.style.height = '100%';
-    drag_div.appendChild(drag_img);
-    drag_div.setAttribute("class", "draggable");
-    elementToBeCloned = el;
-    elementToBeClonedDup = elementToBeCloned.cloneNode(true);
-    elementToBeClonedDup.textContent = "";
-    elementToBeClonedDup.style.zIndex = 1000;
-    elementToBeClonedDup.appendChild(drag_div);
-    var container = document.getElementById("container");
-    elementToBeClonedDup.style.display = "none";
-    elementToBeClonedDup.style.position = "fixed";
-    elementToBeClonedDup.style.pointerEvents = "none";
-    elementToBeClonedDup.style.transform = "scale(".concat(scaleValue, ")");
-    container.appendChild(elementToBeClonedDup);
+
+    // let drag_div = document.createElement('div');
+    // let drag_img = document.createElement('img');
+    // drag_img.style.background = "url('https://wesign.com/assets/images_dev/sign_box_2.png') 50% center / contain no-repeat, rgb(255, 214, 91)";
+    // drag_img.style.opacity = 0.8;
+    // drag_img.style.border =  '1px solid rgb(255, 255, 118)';
+    // drag_img.style.borderRadius =  '5px';
+    // drag_img.style.width = '100%';
+    // drag_img.style.height =  '100%';
+    // drag_div.appendChild(drag_img);
+    // drag_div.setAttribute("class", "draggable");
+    // elementToBeCloned = el;
+    // elementToBeClonedDup=elementToBeCloned.cloneNode(true);
+    // elementToBeClonedDup.textContent="";
+    // elementToBeClonedDup.style.zIndex=1000;
+    // elementToBeClonedDup.appendChild(drag_div);
+    // let container=document.getElementById("container");
+    // elementToBeClonedDup.style.display="none";
+    // elementToBeClonedDup.style.position="fixed";
+    // elementToBeClonedDup.style.pointerEvents="none";
+    // elementToBeClonedDup.style.transform = `scale(${scaleValue})`;
+    // container.appendChild(elementToBeClonedDup);
   },
   onMove: function onMove(dx, dy) {
-    clicked = true;
+
+    // clicked = true;
   },
   onDrop: function onDrop(e, el, clone) {
     // fires on drop
@@ -5151,8 +5153,7 @@ function moveCursor(event) {
         case 0:
           if (clicked == true) {
             clicked = false;
-            container = document.getElementById("container");
-            container.removeChild(elementToBeClonedDup);
+            container = document.getElementById("container"); // container.removeChild(elementToBeClonedDup);
           }
         case 1:
         case "end":
@@ -5187,7 +5188,7 @@ function makeId(prefix) {
   var result = "";
   var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
-  for (var i = 0; i < 10000000000000000; i++) {
+  for (var i = 0; i < 10; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return prefix + "-" + result;
@@ -5217,7 +5218,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61613" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55277" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
